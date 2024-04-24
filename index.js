@@ -1,15 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-//require('dotenv').config()
+require('dotenv').config()
+const body_parser = require('body-parser')
 const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}))
 app.use(express.json());
 
 
+
+
+
+
+//Bkash
+app.use(body_parser.json())
+const mongoose = require('mongoose')
+app.use(express.json())
+console.log("fineee ");
+app.use('/api', require('./routes'))
+console.log("noooo");
+const db = async()=>{
+    try {
+        await mongoose.connect(process.env.db_url)
+        console.log('db connect')
+    } catch (error) {
+        
+    }
+}
+db()
+
+//End Bkash
 
 const uri = "mongodb+srv://Skill-Share-web:ZvOQMfMZYtr44fBL@cluster0.s8or9pd.mongodb.net/?retryWrites=true&w=majority";
 
@@ -110,6 +136,35 @@ app.post('/courses', async (req, res) => {
   const result = await courseCollection.insertOne(course);
   res.send(result);
 });
+app.get('/courses/:course_id',async(req,res)=>{
+  const course_id=req.params.course_id;
+  console.log("hello",course_id);
+  if(!ObjectId.isValid(course_id)){
+    console.log('wrong');
+  }
+  const query={ course_id: course_id}
+  const result=await courseCollection.findOne(query)
+  res.send(result)
+})
+
+app.put('/courses/:id',async(req,res)=>{
+  const id=req.params.id;
+  console.log("id asce",id);
+  const filter={_id:new ObjectId(id)}
+  const options = { upsert: true };
+  const course=req.body;
+  // console.log("email set hoice?",course);
+  const newCourse={
+    $set:{
+      students:course.students
+      
+    }
+  }
+  console.log("my new course:",newCourse);
+  const result=await courseCollection.updateOne(filter,newCourse,options)
+  console.log("result hoice", result);
+  res.send(result)
+})
 // app.get('/courses', async (req, res) => {
 //     const result =await courseCollection.find().toArray();
 //     res.send(result);
@@ -123,6 +178,7 @@ app.get('/courses', async (req, res) => {
   const result = await courseCollection.find(query).toArray();
   res.send(result);
 })
+// app.post('/')
 
 
 //Course End
