@@ -5,13 +5,18 @@ require('dotenv').config()
 const body_parser = require('body-parser')
 const app = express();
 const port = process.env.PORT || 5000;
-
+// const allowedOrigin = ['https://auth-private-all.web.app/']
 // middleware
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}))
+// app.use(cors({
+  // origin: 'https://auth-private-all.web.app/',
+  // credentials: true
+// }))
+app.use(cors());
+
 app.use(express.json());
+
+// app.use(cors());
+// app.use(express.json());
 
 
 
@@ -37,7 +42,8 @@ db()
 
 //End Bkash
 
-const uri = "mongodb+srv://Skill-Share-web:ZvOQMfMZYtr44fBL@cluster0.s8or9pd.mongodb.net/?retryWrites=true&w=majority";
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.s8or9pd.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
