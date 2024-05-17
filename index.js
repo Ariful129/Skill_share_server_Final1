@@ -11,8 +11,9 @@ const port = process.env.PORT || 5000;
   // origin: 'https://auth-private-all.web.app/',
   // credentials: true
 // }))
-app.use(cors());
-
+app.use(cors({
+  origin: 'https://skill-share-client-final1.vercel.app'
+}));
 app.use(express.json());
 
 // app.use(cors());
